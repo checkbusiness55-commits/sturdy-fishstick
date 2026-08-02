@@ -1,0 +1,61 @@
+{
+  "name": "AnalysisLog",
+  "type": "object",
+  "properties": {
+    "asset_id": {
+      "type": "string"
+    },
+    "asset_name": {
+      "type": "string"
+    },
+    "highs": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "lows": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "c1": {
+      "type": "number"
+    },
+    "op1": {
+      "type": "number"
+    },
+    "current_price": {
+      "type": "number"
+    },
+    "sma_20": {
+      "type": "number"
+    },
+    "trend": {
+      "type": "string"
+    },
+    "performance_score": {
+      "type": "number"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "asset_id",
+    "asset_name",
+    "highs",
+    "lows",
+    "c1",
+    "op1",
+    "current_price",
+    "sma_20"
+  ]
+}
