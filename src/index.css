@@ -94,11 +94,14 @@
 
   html, body, #root {
     height: 100%;
+    min-height: 100%;
   }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
     overscroll-behavior: none;
+    background: #020617;
+    color: #f8fafc;
   }
 
   button,
