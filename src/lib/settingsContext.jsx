@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { offlineDB } from './offlineDB';
+import { offlineDB } from './db';
 
 const SettingsContext = createContext();
 
