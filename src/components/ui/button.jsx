@@ -26,3 +26,4 @@ const Button = React.forwardRef(({ className, variant = "default", size = "md", 
 Button.displayName = "Button"
 
 export { Button }
+export const buttonVariants = (props) => '';
