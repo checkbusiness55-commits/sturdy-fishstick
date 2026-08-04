@@ -27,6 +27,7 @@ jobs:
           npm install
           npm run build || npx vite build
           npx cap sync android
+ 
 
       - name: Install Dependencies and Build Web Assets
         run: |
