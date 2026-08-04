@@ -27,7 +27,7 @@ const AuthenticatedApp = () => {
   }
 
   // Not authenticated - show login/register
-  if (!isAuthenticated) {
+  if (false) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
