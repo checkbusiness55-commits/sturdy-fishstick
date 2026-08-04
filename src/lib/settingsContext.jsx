@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { offlineDB } from './db';
+import { db } from './db';
 
 const SettingsContext = createContext();
 
@@ -14,7 +14,7 @@ export const SettingsProvider = ({ children }) => {
     // Load settings from DB on mount
     (async () => {
       try {
-        const saved = await offlineDB.getAllSettings();
+        const saved = await db.getAllSettings();
         if (saved && Object.keys(saved).length > 0) {
           setSettings(prev => ({ ...prev, ...saved }));
         }
@@ -31,7 +31,7 @@ export const SettingsProvider = ({ children }) => {
     // Save to DB
     try {
       for (const [key, value] of Object.entries(newSettings)) {
-        await offlineDB.setSetting(key, value);
+        await db.setSetting(key, value);
       }
     } catch (e) {
       console.error('Failed to save settings:', e);
