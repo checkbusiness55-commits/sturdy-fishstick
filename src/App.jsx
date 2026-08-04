@@ -23,3 +23,5 @@ const AuthenticatedApp = () => {
     </Routes>
   );
 };
+
+export default App;
