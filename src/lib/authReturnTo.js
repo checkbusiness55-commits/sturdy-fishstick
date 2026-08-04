@@ -9,3 +9,4 @@ export const setAuthReturnPath = (path) => {
 export const clearAuthReturnPath = () => {
   localStorage.removeItem('authReturnTo');
 };
+export const safeReturnTo = (path) => path;
