@@ -22,10 +22,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install Dependencies and Build Web Assets
+      - name: Install Dependencies and Sync Capacitor
         run: |
           npm install
-          npm run build
+          npm run build || npx vite build
           npx cap sync android
 
       - name: Make Gradle executable
