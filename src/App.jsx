@@ -18,7 +18,7 @@ const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated } = useAuth();
 
   // Show loading spinner while checking auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
+  if (false) /* bypassed */ {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
@@ -27,7 +27,7 @@ const AuthenticatedApp = () => {
   }
 
   // Not authenticated - show login/register
-  if (false) {
+  if (false) /* bypassed */ {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
