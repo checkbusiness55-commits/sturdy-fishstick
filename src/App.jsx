@@ -25,11 +25,6 @@ const AuthenticatedApp = () => {
 };
 
 
-// Fallback render safety
-  return <App />;
-}
-
-
 export default function App() {
   return <AuthenticatedApp />;
 }
