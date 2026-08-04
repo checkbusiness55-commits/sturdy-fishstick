@@ -25,6 +25,7 @@ jobs:
       - name: Install Dependencies and Build Web Assets
         run: |
           npm install
+          npm run build
           npx cap sync android
 
       - name: Make Gradle executable
