@@ -1,81 +1,51 @@
-import React, { useState, useRef } from "react";
-import { Loader2, ChevronDown } from "lucide-react";
-
-const THRESHOLD = 70;
-const MAX = 110;
+import React, { useState, useRef } from 'react';
 
 export default function PullToRefresh({ onRefresh, children }) {
-  const [pull, setPull] = useState(0);
-  const [refreshing, setRefreshing] = useState(false);
-  const startY = useRef(null);
-  const dragging = useRef(false);
+  const [pulling, setPulling] = useState(false);
+  const [pullProgress, setPullProgress] = useState(0);
+  const startY = useRef(0);
+  const containerRef = useRef(null);
 
-  const scrollTop = () => (document.scrollingElement || document.documentElement).scrollTop;
-
-  const onTouchStart = (e) => {
-    if (refreshing) return;
-    if (scrollTop() <= 0) {
+  const handleTouchStart = (e) => {
+    if (containerRef.current?.scrollTop === 0) {
       startY.current = e.touches[0].clientY;
-      dragging.current = true;
     }
   };
 
-  const onTouchMove = (e) => {
-    if (!dragging.current || refreshing) return;
-    if (scrollTop() > 0) {
-      startY.current = null;
-      setPull(0);
-      return;
-    }
-    const diff = e.touches[0].clientY - startY.current;
-    if (diff > 0) setPull(Math.min(diff * 0.5, MAX));
-    else setPull(0);
-  };
-
-  const onTouchEnd = async () => {
-    if (!dragging.current) return;
-    dragging.current = false;
-    if (pull >= THRESHOLD && !refreshing) {
-      setRefreshing(true);
-      setPull(THRESHOLD);
-      try {
-        await onRefresh();
-      } finally {
-        setRefreshing(false);
-        setPull(0);
+  const handleTouchMove = (e) => {
+    if (startY.current && containerRef.current?.scrollTop === 0) {
+      const y = e.touches[0].clientY - startY.current;
+      if (y > 0) {
+        setPulling(true);
+        setPullProgress(Math.min(y / 80, 1));
       }
-    } else {
-      setPull(0);
     }
-    startY.current = null;
   };
 
-  const ready = pull >= THRESHOLD;
+  const handleTouchEnd = async () => {
+    if (pullProgress >= 0.8) {
+      await onRefresh();
+    }
+    setPulling(false);
+    setPullProgress(0);
+    startY.current = 0;
+  };
 
   return (
     <div
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-      onTouchCancel={onTouchEnd}
+      ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      className="relative"
     >
-      <div
-        className="flex items-center justify-center overflow-hidden"
-        style={{
-          height: pull,
-          transition: refreshing || !dragging.current ? "height 0.2s ease" : "none",
-        }}
-      >
-        {refreshing ? (
-          <Loader2 className="h-5 w-5 animate-spin text-app-accent" />
-        ) : pull > 8 ? (
-          <ChevronDown
-            className={`h-5 w-5 text-muted-foreground transition-transform duration-150 ${
-              ready ? "rotate-180" : ""
-            }`}
-          />
-        ) : null}
-      </div>
+      {pulling && (
+        <div className="absolute top-0 left-0 right-0 flex justify-center py-2">
+          <div className="text-xs text-muted-foreground">
+            {pullProgress < 0.8 ? 'Pull to refresh...' : 'Release to refresh'}
+          </div>
+        </div>
+      )}
       {children}
     </div>
   );
