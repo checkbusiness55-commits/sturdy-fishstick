@@ -1,37 +1,36 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronRight, Trash2, TrendingUp } from "lucide-react";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { TrendingUp } from 'lucide-react';
 
-export default function AssetCard({ asset, onDelete, logCount }) {
+export default function AssetCard({ asset, logCount, onDelete }) {
   const navigate = useNavigate();
 
   return (
-    <div
-      onClick={() => navigate(`/analyzer/${asset.id}`)}
-      className="group relative cursor-pointer select-none rounded-2xl border border-border bg-card/80 backdrop-blur-sm p-4 transition-all active:scale-[0.98] hover:border-app-accent/50"
-    >
-      <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-app-accent/15">
-          <TrendingUp className="h-5 w-5 text-app-accent" />
+    <div className="rounded-lg border border-border bg-card/70 backdrop-blur-sm p-4 flex items-center justify-between hover:bg-muted/30 transition">
+      <button
+        onClick={() => navigate(`/analyzer/${asset.id}`)}
+        className="flex-1 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-app-accent/15">
+            <TrendingUp className="h-5 w-5 text-app-accent" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm">{asset.name}</h3>
+            {asset.symbol && <p className="text-xs text-muted-foreground">{asset.symbol}</p>}
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-display font-semibold truncate">{asset.name}</p>
-          {asset.symbol && <p className="text-xs text-muted-foreground truncate">{asset.symbol}</p>}
-          {typeof logCount === "number" && (
-            <p className="text-[11px] text-muted-foreground mt-0.5">{logCount} analyses</p>
-          )}
-        </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+      </button>
+      <div className="text-right ml-4">
+        <p className="text-sm font-semibold text-app-accent">{logCount || 0}</p>
+        <p className="text-xs text-muted-foreground">analyses</p>
       </div>
-      {onDelete && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute top-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition text-muted-foreground hover:text-bearish"
-          aria-label="Delete asset"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
-      )}
+      <button
+        onClick={() => onDelete()}
+        className="ml-4 text-xs text-muted-foreground hover:text-destructive transition"
+      >
+        ✕
+      </button>
     </div>
   );
 }

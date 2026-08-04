@@ -1,77 +1,135 @@
-# Base44 Project
+# Range Pilot - Offline Trading Analysis App
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+## 🚀 100% Offline | No Server Required | All Data Local
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+Range Pilot is a fully offline trading analysis application for Android. Analyze trading ranges, calculate pivot levels, and manage your trading logs — all stored securely on your device.
 
-## Prerequisites
+### Features
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+✅ **100% Offline** - Works without internet connection  
+✅ **Local Authentication** - Your account stays on your device  
+✅ **Trading Analysis** - Pivot, support, and resistance calculations  
+✅ **Position Sizing** - Risk management tools  
+✅ **Analysis History** - All trades saved locally  
+✅ **Dark Mode** - Easy on the eyes  
+✅ **Android Native** - Built with Capacitor  
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
-
-## Run Locally
-
-Run the full local development environment from the project root:
-
-```bash
-base44 dev
-```
-
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
-
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
+### Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Development
 npm run dev
+
+# Build
+npm run build
+
+# Build for Android
+npx cap build android
 ```
 
-Open the local URL printed by Vite.
+### Setup for Android
 
-## Use The Hosted Backend
+1. **Install Capacitor**
+   ```bash
+   npm install -D @capacitor/core @capacitor/cli @capacitor/android
+   npx cap init
+   ```
 
-For frontend-only development, create or update `.env.local` in the project root:
+2. **Add Android Platform**
+   ```bash
+   npx cap add android
+   ```
 
-```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
+3. **Build and Deploy**
+   ```bash
+   npm run build
+   npx cap sync
+   npx cap open android
+   ```
+
+### Database
+
+All data is stored in **IndexedDB** (Dexie.js):
+- **Users** - Local authentication with hashed passwords
+- **Assets** - Trading instruments
+- **Analysis Logs** - All analysis records
+- **Settings** - App preferences
+
+### Security
+
+- Passwords are hashed with SHA256 + salt
+- No data leaves your device
+- Sessions stored in localStorage only
+- Clear all data option in Settings
+
+### Tech Stack
+
+- **React 18** - UI framework
+- **Dexie.js** - IndexedDB wrapper
+- **Tailwind CSS** - Styling
+- **React Router** - Navigation
+- **Lucide Icons** - Icons
+- **Sonner** - Notifications
+- **CryptoJS** - Password hashing
+- **Capacitor** - Android bridge
+
+### File Structure
+
+```
+src/
+  lib/
+    db.js               - Database schema
+    offlineDB.js        - Database operations
+    authService.js      - Authentication
+    cryptoUtils.js      - Password hashing
+    AuthContext.jsx     - Auth state management
+    analysis.js         - Trading calculations
+  pages/
+    Home.jsx            - Assets list
+    Analyzer.jsx        - Analysis tool
+    History.jsx         - Analysis history
+    AnalysisDetail.jsx   - Detailed view
+    Settings.jsx        - App settings
+    Login.jsx           - Login page
+    Register.jsx        - Registration page
+  components/
+    AnalysisForm.jsx    - Input form
+    PositionSizer.jsx   - Position calculator
+    ResultCards.jsx     - Results display
+    Layout.jsx          - Main layout
+    BottomNav.jsx       - Navigation
 ```
 
-`VITE_BASE44_APP_ID` identifies the Base44 app.
+### Usage
 
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
+1. **Create Account** - Sign up with username, email, password
+2. **Add Assets** - Add trading pairs (EURUSD, etc.)
+3. **Analyze** - Enter highs, lows, current price, SMA20
+4. **View Results** - See pivot levels, support, resistance
+5. **Save Logs** - Store analysis with notes and tags
+6. **Review History** - Access all past analyses
 
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
+### Keyboard Shortcuts
 
-## Publish Your Changes
+- Swipe down from top to refresh
+- Long press asset to delete
+- Tap analysis to view details
 
-After pushing your changes to git, open the Base44 dashboard and publish the app:
+### Privacy
 
-```bash
-base44 dashboard open
-```
+All data is yours. Nothing is sent to our servers because there are no servers. Your trading data never leaves your phone.
 
-## Docs & Support
+### License
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+MIT
 
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
+### Support
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+For issues, create an issue on GitHub or check the docs.
+
+---
+
+**Range Pilot v1.0.0** | Built for traders, by traders 📈

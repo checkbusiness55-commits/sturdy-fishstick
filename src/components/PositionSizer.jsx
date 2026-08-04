@@ -1,72 +1,50 @@
-import React, { useState, useMemo } from "react";
-import { positionSize } from "@/lib/analysis";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Shield, Scale } from "lucide-react";
-
-function fmt(v) {
-  return typeof v === "number" && isFinite(v) ? v.toFixed(2) : "—";
-}
+import React, { useState } from 'react';
 
 export default function PositionSizer({ result }) {
-  const [balance, setBalance] = useState("10000");
-  const [riskPercent, setRiskPercent] = useState("1");
-  const [entry, setEntry] = useState(String(result ? result.direct.pivot : ""));
-  const [stopLoss, setStopLoss] = useState(String(result ? result.direct.lowZoneEnd : ""));
-  const [takeProfit, setTakeProfit] = useState(String(result ? result.direct.highZoneEnd : ""));
+  const [accountSize, setAccountSize] = useState('1000');
+  const [riskPercent, setRiskPercent] = useState('2');
 
-  const calc = useMemo(() => {
-    const e = parseFloat(entry), s = parseFloat(stopLoss), t = parseFloat(takeProfit), b = parseFloat(balance), r = parseFloat(riskPercent);
-    if (![e, s, t, b, r].every((v) => isFinite(v))) return null;
-    return positionSize({ balance: b, riskPercent: r, entry: e, stopLoss: s, takeProfit: t });
-  }, [entry, stopLoss, takeProfit, balance, riskPercent]);
+  const acct = parseFloat(accountSize) || 0;
+  const risk = parseFloat(riskPercent) || 0;
+  const riskAmount = (acct * risk) / 100;
+  const pipRange = Math.abs(result.direct.resistance1 - result.direct.support1);
+  const positionSize = pipRange > 0 ? riskAmount / pipRange : 0;
 
   return (
     <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-sm p-4 space-y-4">
-      <div className="flex items-center gap-2">
-        <Scale className="h-4 w-4 text-app-accent" />
-        <h3 className="font-display font-semibold">Risk-Reward & Position Sizing</h3>
-      </div>
+      <h3 className="font-display font-semibold text-sm">Position Sizer</h3>
+      
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <Label className="text-[11px] uppercase text-muted-foreground">Account Balance</Label>
-          <Input type="number" inputMode="decimal" value={balance} onChange={(e) => setBalance(e.target.value)} />
+          <label className="text-xs text-muted-foreground">Account Size ($)</label>
+          <input
+            type="number"
+            value={accountSize}
+            onChange={(e) => setAccountSize(e.target.value)}
+            className="w-full mt-1 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 ring-app-accent"
+          />
         </div>
         <div>
-          <Label className="text-[11px] uppercase text-muted-foreground">Risk %</Label>
-          <Input type="number" inputMode="decimal" value={riskPercent} onChange={(e) => setRiskPercent(e.target.value)} />
-        </div>
-        <div>
-          <Label className="text-[11px] uppercase text-muted-foreground">Entry</Label>
-          <Input type="number" inputMode="decimal" value={entry} onChange={(e) => setEntry(e.target.value)} />
-        </div>
-        <div>
-          <Label className="text-[11px] uppercase text-muted-foreground">Stop Loss</Label>
-          <Input type="number" inputMode="decimal" value={stopLoss} onChange={(e) => setStopLoss(e.target.value)} className="text-bearish" />
-        </div>
-        <div className="col-span-2">
-          <Label className="text-[11px] uppercase text-muted-foreground">Take Profit</Label>
-          <Input type="number" inputMode="decimal" value={takeProfit} onChange={(e) => setTakeProfit(e.target.value)} className="text-bullish" />
+          <label className="text-xs text-muted-foreground">Risk %</label>
+          <input
+            type="number"
+            step="0.1"
+            value={riskPercent}
+            onChange={(e) => setRiskPercent(e.target.value)}
+            className="w-full mt-1 rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 ring-app-accent"
+          />
         </div>
       </div>
-      {calc && (
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="rounded-xl bg-muted/50 p-3">
-            <p className="text-[11px] uppercase text-muted-foreground flex items-center gap-1"><Shield className="h-3 w-3" /> Risk Amount</p>
-            <p className="font-mono font-semibold">{fmt(calc.riskAmount)}</p>
-          </div>
-          <div className="rounded-xl bg-muted/50 p-3">
-            <p className="text-[11px] uppercase text-muted-foreground">Recommended Lot</p>
-            <p className="font-mono font-semibold">{fmt(calc.lotSize)}</p>
-          </div>
-          <div className="col-span-2 rounded-xl bg-app-accent/10 p-3 flex items-center justify-between">
-            <span className="text-[11px] uppercase text-muted-foreground">Risk : Reward</span>
-            <span className={`font-mono font-bold ${calc.rr >= 1.5 ? "text-bullish" : calc.rr >= 1 ? "text-app-accent" : "text-bearish"}`}>
-              1 : {fmt(calc.rr)}
-            </span>
-          </div>
-        </div>
-      )}
+
+      <div className="rounded-lg bg-app-accent/10 border border-app-accent/20 p-3">
+        <p className="text-xs text-muted-foreground mb-1">Risk Amount</p>
+        <p className="text-lg font-bold text-app-accent">${riskAmount.toFixed(2)}</p>
+      </div>
+
+      <div className="rounded-lg bg-app-accent/10 border border-app-accent/20 p-3">
+        <p className="text-xs text-muted-foreground mb-1">Position Size</p>
+        <p className="text-lg font-bold text-app-accent">{positionSize.toFixed(4)}</p>
+      </div>
     </div>
   );
 }

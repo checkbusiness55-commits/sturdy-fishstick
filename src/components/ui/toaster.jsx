@@ -1,33 +1,11 @@
-import { useToast } from "@/components/ui/use-toast";
-import {
-  Toast,
-  ToastClose,
-  ToastDescription,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-} from "@/components/ui/toast";
+import * as React from "react"
 
-export function Toaster() {
-  const { toasts } = useToast();
-
+const Toaster = () => {
   return (
-    <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
-        return (
-          <Toast key={id} {...props}>
-            <div className="grid gap-1">
-              {title && <ToastTitle>{title}</ToastTitle>}
-              {description && (
-                <ToastDescription>{description}</ToastDescription>
-              )}
-            </div>
-            {action}
-            <ToastClose />
-          </Toast>
-        );
-      })}
-      <ToastViewport />
-    </ToastProvider>
-  );
-} 
+    <div className="fixed bottom-20 right-4 z-50 flex flex-col gap-2 max-w-sm">
+      {/* Toast messages will be rendered by sonner Toaster */}
+    </div>
+  )
+}
+
+export { Toaster }

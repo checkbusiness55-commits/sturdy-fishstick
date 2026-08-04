@@ -1,0 +1,30 @@
+# Ignore dependencies
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Capacitor
+android/
+ios/
+.capacitor/
+capacitor.config.json
+
+# Testing
+coverage/
+.nyc_output/

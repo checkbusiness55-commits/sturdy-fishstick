@@ -1,67 +1,60 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { offlineDB } from './offlineDB';
 
-const SettingsContext = createContext(null);
+const SettingsContext = createContext();
 
-const DEFAULTS = {
-  themeMode: "dark", // 'dark' | 'light' | 'auto'
-  accent: "#00E676",
-  appLockEnabled: false,
-  pin: "",
-  hapticEnabled: true,
-  soundEnabled: false,
+export const SettingsProvider = ({ children }) => {
+  const [settings, setSettings] = useState({
+    hapticFeedback: true,
+    darkMode: true,
+    theme: 'dark'
+  });
+
+  useEffect(() => {
+    // Load settings from DB on mount
+    (async () => {
+      try {
+        const saved = await offlineDB.getAllSettings();
+        if (saved && Object.keys(saved).length > 0) {
+          setSettings(prev => ({ ...prev, ...saved }));
+        }
+      } catch (e) {
+        console.error('Failed to load settings:', e);
+      }
+    })();
+  }, []);
+
+  const updateSettings = async (newSettings) => {
+    const updated = { ...settings, ...newSettings };
+    setSettings(updated);
+    
+    // Save to DB
+    try {
+      for (const [key, value] of Object.entries(newSettings)) {
+        await offlineDB.setSetting(key, value);
+      }
+    } catch (e) {
+      console.error('Failed to save settings:', e);
+    }
+  };
+
+  return (
+    <SettingsContext.Provider value={{ settings, updateSettings }}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };
 
-function loadSettings() {
-  try {
-    const raw = localStorage.getItem("app_settings");
-    if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
-  } catch {}
-  return { ...DEFAULTS };
-}
-
-export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(loadSettings);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("app_settings", JSON.stringify(settings));
-    } catch {}
-  }, [settings]);
-
-  const update = useCallback((patch) => setSettings((s) => ({ ...s, ...patch })), []);
-
-  useEffect(() => {
-    const apply = () => {
-      let dark;
-      if (settings.themeMode === "dark") dark = true;
-      else if (settings.themeMode === "light") dark = false;
-      else dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.classList.toggle("dark", dark);
-    };
-    apply();
-    if (settings.themeMode === "auto") {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = () => apply();
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-    }
-  }, [settings.themeMode]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty("--app-accent", settings.accent);
-  }, [settings.accent]);
-
-  return <SettingsContext.Provider value={{ settings, update }}>{children}</SettingsContext.Provider>;
-}
-
-export function useSettings() {
-  const ctx = useContext(SettingsContext);
-  if (!ctx) throw new Error("useSettings must be used within SettingsProvider");
-  return ctx;
-}
-
-export function haptic(settings) {
-  if (settings?.hapticEnabled && typeof navigator !== "undefined" && navigator.vibrate) {
-    try { navigator.vibrate(30); } catch {}
+export const useSettings = () => {
+  const context = useContext(SettingsContext);
+  if (!context) {
+    throw new Error('useSettings must be used within SettingsProvider');
   }
-}
+  return context;
+};
+
+export const haptic = (settings) => {
+  if (settings?.hapticFeedback && navigator.vibrate) {
+    navigator.vibrate(10);
+  }
+};

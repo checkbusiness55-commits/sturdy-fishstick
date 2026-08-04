@@ -1,10 +1,6 @@
 import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
 import { HashRouter as Router, Route, Routes } from 'react-router-dom';
-import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { Toaster as SonnerToaster } from 'sonner';
 import { SettingsProvider } from '@/lib/settingsContext';
@@ -14,12 +10,14 @@ import Analyzer from '@/pages/Analyzer';
 import History from '@/pages/History';
 import AnalysisDetail from '@/pages/AnalysisDetail';
 import SettingsPage from '@/pages/Settings';
-// Add page imports here
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import PageNotFound from './lib/PageNotFound';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
+  // Show loading spinner while checking auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -28,18 +26,18 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
+  // Not authenticated - show login/register
+  if (!isAuthenticated) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    );
   }
 
-  // Render the main app
+  // Authenticated - show app
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -54,20 +52,16 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <SettingsProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <ScrollToTop />
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-          <SonnerToaster position="top-center" richColors theme="system" />
-        </QueryClientProvider>
+        <Router>
+          <ScrollToTop />
+          <AuthenticatedApp />
+        </Router>
+        <Toaster />
+        <SonnerToaster position="top-center" richColors theme="system" />
       </SettingsProvider>
     </AuthProvider>
   )

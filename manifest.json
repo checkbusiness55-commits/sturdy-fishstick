@@ -1,0 +1,18 @@
+{
+  "name": "Range Pilot",
+  "short_name": "Pilot",
+  "description": "Offline Trading Analysis App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#00E676",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23020617'/><text x='50%' y='50%' font-size='120' text-anchor='middle' dominant-baseline='middle' fill='%2300E676' font-weight='bold'>📈</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

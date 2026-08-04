@@ -1,42 +1,40 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, History as HistoryIcon, Settings as SettingsIcon } from "lucide-react";
-
-const items = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/history", label: "History", icon: HistoryIcon },
-  { to: "/settings", label: "Settings", icon: SettingsIcon },
-];
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Home, History, Settings } from 'lucide-react';
 
 export default function BottomNav() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const path = location.pathname;
+
+  const isActive = (route) => path === route || path.startsWith(route + '/');
+
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/80 backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
-      <div className="mx-auto max-w-md flex">
-        {items.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === "/"}
-            className={({ isActive }) =>
-              `flex-1 flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors ${
-                isActive ? "text-app-accent" : "text-muted-foreground"
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all ${
-                    isActive ? "bg-app-accent/15 scale-105" : ""
-                  }`}
-                >
-                  <Icon className="h-5 w-5" strokeWidth={isActive ? 2.4 : 2} />
-                </span>
-                {label}
-              </>
-            )}
-          </NavLink>
-        ))}
+    <nav className="fixed bottom-0 left-0 right-0 border-t border-border bg-background/80 backdrop-blur-sm">
+      <div className="max-w-2xl mx-auto px-4 flex justify-around">
+        <button
+          onClick={() => navigate('/')}
+          className={`flex-1 flex items-center justify-center py-3 text-xs font-medium transition ${
+            isActive('/') ? 'text-app-accent border-t-2 border-app-accent' : 'text-muted-foreground'
+          }`}
+        >
+          <Home className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => navigate('/history')}
+          className={`flex-1 flex items-center justify-center py-3 text-xs font-medium transition ${
+            isActive('/history') ? 'text-app-accent border-t-2 border-app-accent' : 'text-muted-foreground'
+          }`}
+        >
+          <History className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => navigate('/settings')}
+          className={`flex-1 flex items-center justify-center py-3 text-xs font-medium transition ${
+            isActive('/settings') ? 'text-app-accent border-t-2 border-app-accent' : 'text-muted-foreground'
+          }`}
+        >
+          <Settings className="h-5 w-5" />
+        </button>
       </div>
     </nav>
   );
