@@ -1,10 +1,6 @@
 
 window.addEventListener('error', (event) => {
-  document.body.innerHTML = '<div style="color:red;padding:20px;font-family:monospace;word-break:break-all;"><h3>Runtime Error:</h3>' + (event.error ? event.error.stack || event.message : event.message) + '<br><small>' + event.filename + ':' + event.lineno + '</small></div>';
-});
-
-window.addEventListener('unhandledrejection', (event) => {
-  document.body.innerHTML = '<div style="color:orange;padding:20px;font-family:monospace;word-break:break-all;"><h3>Unhandled Promise Rejection:</h3>' + (event.reason ? event.reason.stack || event.reason : event.reason) + '</div>';
+  document.body.innerHTML = '<div style="color:red;padding:15px;font-family:monospace;font-size:12px;word-break:break-all;"><b>CRASH:</b> ' + (event.message || 'Unknown') + '<br><br><b>File:</b> ' + event.filename + ':' + event.lineno + '</div>';
 });
 
 import React from 'react';
